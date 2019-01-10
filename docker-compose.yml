@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+
+  # Postgres
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=intelbras
+      - POSTGRES_PASSWORD=intelbras
+      - POSTGRES_DB=intelbras_db
+    ports:
+      - "5432:5432"
+      
+  web:
+    restart: always
+    build: .
+    command: >
+        bash -c "python3 backend-intelbras/manage.py makemigrations pessoa endereco departamento usuario visitante area zonatempo dispositivo perfilacesso
+        && python3 backend-intelbras/manage.py migrate 
+        && python3 backend-intelbras/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    links:
+      - db
+    depends_on:
+      - db
+
